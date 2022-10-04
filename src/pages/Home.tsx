@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react"
+import { useDebounce } from "../hooks/debounce";
 import { useSearchUsersQuery } from "../store/github/github.api"
 
 export const Home = () => {
     const [search, setSearch] = useState("");
     const {isLoading, isError, data } = useSearchUsersQuery("eduard")
     
+    const debounced = useDebounce(search)
 
     useEffect(()=>{
         console.log(search)
-    },[search])
+    },[debounced])
     return (
         <div className="flex justify-center pt-10 mx-auto h-screen w-screen">
             {isError && <p className="text-center text-red-600">Something went wrong...</p>}

@@ -1,14 +1,26 @@
 import { useEffect, useState } from "react"
 import { useDebounce } from "../hooks/debounce";
-import { useSearchUsersQuery } from "../store/github/github.api"
+import { useLazyGetUserReposQuery, useSearchUsersQuery } from "../store/github/github.api"
 
 export const Home = () => {
     const [search, setSearch] = useState("");
     const [dropdown, setDropdown] = useState(false)
+
+    //debounced это search только значение вернется после заданного интервала времени
     const debounced = useDebounce(search)
+
+    //переменные сформируются после окончания асинхронной функциии
     const { isLoading, isError, data } = useSearchUsersQuery(debounced, {
-        skip: debounced.length < 3
+        skip: debounced.length < 3,
+        refetchOnFocus:true
     })
+
+    const [fetchRepos, {isLoading: areReposLoading, data: repos}] = useLazyGetUserReposQuery()
+
+    const clickHandler = (user: string) =>{
+        fetchRepos(user)
+        console.log(repos)
+    }
 
 
     useEffect(() => {
@@ -30,6 +42,7 @@ export const Home = () => {
                     {data?.map(user => (
                         <li
                             key={user.id}
+                            onClick={()=>clickHandler(user.login)}
                             className="py-2 px-4 hover:bg-gray-500 hover:text-white transition-colors cursor-pointer"
                         >{user.login}</li>
                     ))}

@@ -47,6 +47,10 @@ export const Home = () => {
                         >{user.login}</li>
                     ))}
                 </ul>}
+                <div className="container">
+                    {areReposLoading && <p className="text-center">Repos are loading...</p>}
+                    {repos?.map(repo=><p>{repo.url}</p>)}
+                </div>
             </div>
         </div>
     )
